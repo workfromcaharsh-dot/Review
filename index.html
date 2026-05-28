@@ -281,6 +281,14 @@
                     <label class="checkbox-label">
                         <input type="checkbox" name="category" value="Bookkeeping Service" onchange="handleCategoryChange(this)"> Bookkeeping Service
                     </label>
+                    <!-- New Categories Added Here -->
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="NRI Taxation" onchange="handleCategoryChange(this)"> NRI Taxation
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Company Incorporation" onchange="handleCategoryChange(this)"> Company Incorporation
+                    </label>
+                    
                     <div class="other-input-container">
                         <label class="checkbox-label">
                             <input type="checkbox" id="otherCheckbox" value="Other" onchange="handleOtherChange(this)"> Other —
@@ -319,44 +327,61 @@
     </div>
 
     <script>
-        // High-end, corporate, and professional review text structures
-        const reviewComponents = {
-            "Accounting": {
-                openings: ["Exceptional corporate financial advisory from a highly knowledgeable team.", "Their strategic approach to handling company accounts is outstanding.", "They offer a highly reliable and professional financial partnership."],
-                cores: ["They systematically restructured our accounting framework and fixed data anomalies perfectly.", "Their precision in asset management and active balance analysis saved us significant capital.", "They provide deep corporate insights and manage complex financial portfolios with complete accuracy."],
-                closings: ["An absolute asset for long-term business growth.", "Highly recommended for corporate financial oversight.", "Superb attention to detail and flawless execution."]
-            },
-            "Audits": {
-                openings: ["They conducted our company's statutory audit with complete transparency.", "Highly rigorous and professional corporate audit performance.", "Their systematic approach to financial verification is top-tier."],
-                cores: ["They meticulously analyzed our operational records and provided incredibly actionable compliance guidance.", "Every regulatory requirement was met perfectly, and they simplified our statutory reports.", "Their detailed observation and reporting helped optimize our corporate internal controls."],
-                closings: ["Exceptional professionals for high-level compliance handling.", "Their structural integrity and work ethic are highly commendable.", "Strongly recommended for internal and statutory audits."]
-            },
-            "GST": {
-                openings: ["Their team completely streamlined our multi-state GST filing structure.", "Flawless management of corporate indirect tax portfolios and cross-border adjustments.", "Highly efficient resolution of complex GST advisory matters."],
-                cores: ["They managed to seamlessly reconcile our past returns and optimize our Input Tax Credit allocation.", "They track tax portal amendments instantly and maintain zero-error compliance levels.", "Their fast response to real-time transactional invoicing issues keeps our operations smooth."],
-                closings: ["The best advisory team for handling high-volume indirect tax returns.", "Incredibly professional approach to complex tax portal filing.", "Highly dependable execution from start to finish."]
-            },
-            "Income Tax Return (ITR)": {
-                openings: ["Exceptional advisory support during our annual corporate income tax filing.", "They offer highly strategic tax planning and structured filing workflows.", "Their deep insight into changing direct tax regulations is incredibly valuable."],
-                cores: ["They analyzed our income portfolios meticulously to ensure legal tax optimization under the ideal regime.", "The entire documentation and filing process was executed flawlessly with zero technical delays.", "They break down complex deduction pathways so our corporate filings remain completely secure."],
-                closings: ["Highly recommend their firm for corporate tax structure optimization.", "Extremely pleased with their thorough direct tax consultancy.", "A trusted and highly professional partner for all annual filings."]
-            },
-            "Financing": {
-                openings: ["They delivered outstanding strategic consultation regarding our corporate fundraising goals.", "Their technical guidance during capital structure evaluation was invaluable.", "An exceptionally well-connected and highly resourceful corporate advisory team."],
-                cores: ["They structured our project underwriting documents perfectly to streamline approval timelines.", "Their detailed market assessments completely transformed our corporate credit strategy.", "They broke down long fiscal underwriting procedures into simple execution milestones."],
-                closings: ["Superb financial strategists for expanding commercial operations.", "We achieved our target project capital requirements seamlessly thanks to them.", "Highly technical advisory execution."]
-            },
-            "Bookkeeping Service": {
-                openings: ["They maintain impeccable standards regarding daily transactional recording.", "Our real-time ledger records are kept perfectly organized and auditable.", "Exceptional reliability regarding corporate ledger reconciliation data updates."],
-                cores: ["Our balances are reconciled flawlessly down to the penny with zero administrative oversight required.", "They structured our unstructured entry systems into clean, real-time balance spreadsheets.", "They handle high-volume data streams promptly without needing continuous validation checks."],
-                closings: ["Highly recommend their professional commercial bookkeeping plans.", "Outstanding day-to-day transaction records accuracy.", "A truly dependable operations support team."]
-            },
-            "Other": {
-                openings: ["They delivered an outstanding professional execution from start to finish.", "A highly sophisticated corporate service experience driven by a dedicated workforce.", "They exceeded all our expectations across every operational metric."],
-                cores: ["The entire engagement was handled with meticulous precision and excellent project tracking.", "They prioritize institutional workflow safety and maintain transparent communication pathways throughout.", "Their execution speeds, clear framework pricing, and dedicated corporate support are unmatched."],
-                closings: ["We will definitely expand our partnership with them in future phases.", "Highly recommended for organizations looking for elite corporate assistance.", "Deep gratitude for the exceptional support."]
-            }
+        // Highly realistic, short, human-style review pools including the new items
+        const reviewTemplates = {
+            "Accounting": [
+                "The team was super helpful with my accounts. They managed everything perfectly without any delays.",
+                "Great experience here. They kept all my financial records clean and completely hassle-free.",
+                "Extremely professional. They handled my business accounts smoothly and answered all my questions."
+            ],
+            "Audits": [
+                "Our business audit went incredibly smooth. The team is thorough and very professional.",
+                "They made the whole audit process clear and stress-free for us. Excellent compliance support.",
+                "Very satisfied with their audit work. Meticulous, fast, and completely dependable."
+            ],
+            "GST": [
+                "They made my monthly GST filings completely stress-free. Very prompt and reliable support.",
+                "Excellent handling of our GST portal work. Saved us a lot of time and potential compliance issues.",
+                "Super responsive whenever I have any queries regarding GST invoicing and returns."
+            ],
+            "Income Tax Return (ITR)": [
+                "Filing my ITR was never this quick before. They sorted my taxes perfectly with zero hassle.",
+                "Highly recommend them for tax planning. They handled my tax returns quickly and saved me a lot of stress.",
+                "Very professional team. They filed my ITR on time and made the entire process simple."
+            ],
+            "Financing": [
+                "Got excellent financial advice here. They helped guide us through our options very clearly.",
+                "Very practical insights and great support for our funding requirements. Highly recommended.",
+                "They made complex financial procedures look very simple. Great consultants to work with."
+            ],
+            "Bookkeeping Service": [
+                "Our day-to-day books are perfectly organized now. Reliable data tracking every month.",
+                "Excellent bookkeeping work. They logs everything cleanly and match ledgers perfectly.",
+                "Highly recommend their bookkeeping. Fast, updated records without needing continuous follow-ups."
+            ],
+            "NRI Taxation": [
+                "They are excellent with NRI tax laws. Handled my foreign income questions and filings perfectly.",
+                "Very smooth experience dealing with NRI compliance issues from abroad. Highly knowledgeable team.",
+                "They sorted out my double taxation worries completely. Super professional and highly clear communication."
+            ],
+            "Company Incorporation": [
+                "They made our registration process so quick and easy. Handled all the documentation cleanly.",
+                "Incredible support for setting up our new company. Everything from paperwork to registration was seamless.",
+                "Great experience incorporating our business. They managed the whole process perfectly on time."
+            ],
+            "Other": [
+                "The experience was absolutely wonderful. The team went out of their way to handle things cleanly.",
+                "Incredibly professional service and very friendly staff. Highly recommended to everyone.",
+                "Exceeded all my expectations. Fast turnaround time and great support throughout."
+            ]
         };
+
+        const generalConnectors = [
+            "Everything was done smoothly and right on time. Highly recommend their services!",
+            "Super professional team and totally hassle-free process. Five stars!",
+            "They really listen to your needs and handle everything with extreme care.",
+            "Very satisfied with the quick support and seamless experience. Will definitely continue with them."
+        ];
 
         function handleOtherChange(otherCheckbox) {
             const standardCategories = document.querySelectorAll('input[name="category"]');
@@ -429,19 +454,35 @@
             }
 
             const userProfession = checkedProfession.value;
-
-            let compiledReviewParts = [];
             const isOtherChecked = document.getElementById('otherCheckbox').checked;
-            let processCategories = isOtherChecked ? ["Other"] : categories;
 
-            processCategories.forEach(cat => {
-                const pool = reviewComponents[cat] || reviewComponents["Other"];
-                const randomOpen = pool.openings[Math.floor(Math.random() * pool.openings.length)];
-                const randomCore = pool.cores[Math.floor(Math.random() * pool.cores.length)];
-                const randomClose = pool.closings[Math.floor(Math.random() * pool.closings.length)];
-                compiledReviewParts.push(`${randomOpen} ${randomCore} ${randomClose}`);
-            });
-            const userReviewText = compiledReviewParts.join(" ");
+            let userReviewText = "";
+            
+            if (isOtherChecked) {
+                const pool = reviewTemplates["Other"];
+                userReviewText = pool[Math.floor(Math.random() * pool.length)];
+            } else if (categories.length === 1) {
+                const cat = categories[0];
+                const pool = reviewTemplates[cat];
+                userReviewText = pool[Math.floor(Math.random() * pool.length)];
+            } else {
+                const randomClosing = generalConnectors[Math.floor(Math.random() * generalConnectors.length)];
+                
+                let listedItems = "";
+                if (categories.length === 2) {
+                    listedItems = categories.join(" and ");
+                } else {
+                    listedItems = categories.slice(0, -1).join(", ") + " and " + categories[categories.length - 1];
+                }
+                
+                const multiPool = [
+                    `The team provided exceptional and very prompt support handling our ${listedItems} requirements.`,
+                    `Really great experience working with them for our ${listedItems} work.`,
+                    `They made the entire process for our ${listedItems} completely stress-free and smooth.`
+                ];
+                
+                userReviewText = `${multiPool[Math.floor(Math.random() * multiPool.length)]} ${randomClosing}`;
+            }
 
             let categoryString = "";
             if (categories.length === 1) {
