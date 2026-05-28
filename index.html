@@ -281,7 +281,6 @@
                     <label class="checkbox-label">
                         <input type="checkbox" name="category" value="Bookkeeping Service" onchange="handleCategoryChange(this)"> Bookkeeping Service
                     </label>
-                    <!-- New Categories Added Here -->
                     <label class="checkbox-label">
                         <input type="checkbox" name="category" value="NRI Taxation" onchange="handleCategoryChange(this)"> NRI Taxation
                     </label>
@@ -327,7 +326,6 @@
     </div>
 
     <script>
-        // Highly realistic, short, human-style review pools including the new items
         const reviewTemplates = {
             "Accounting": [
                 "The team was super helpful with my accounts. They managed everything perfectly without any delays.",
@@ -491,7 +489,8 @@
                 categoryString = categories.slice(0, -1).join(", ") + " and " + categories[categories.length - 1] + " business categories";
             }
 
-            const fullyBuiltDraft = `My name is ${fname} ${lname}. I am a ${userProfession} from ${location}. I avail the ${categoryString}. ${userReviewText}`;
+            // Names have been completely dropped from this structure per your requirement
+            const fullyBuiltDraft = `I am a ${userProfession} from ${location}. I avail the ${categoryString}. ${userReviewText}`;
 
             document.getElementById('draftText').innerText = fullyBuiltDraft;
             document.getElementById('modalOverlay').style.display = 'flex';
