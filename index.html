@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Assistant</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg: #f3f4f6;
+            --card: #ffffff;
+            --text: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: var(--card);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--primary);
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .name-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .name-row .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        label span {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: normal;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        /* Clean selection list without background boxes */
+        .selection-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 5px 2px;
+        }
+
+        .radio-label, .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: normal;
+            font-size: 0.95rem;
+            cursor: pointer;
+            margin-bottom: 0;
+        }
+
+        .checkbox-label.disabled {
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .other-input-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .other-text-field {
+            padding: 6px 10px !important;
+            font-size: 0.9rem !important;
+            width: auto !important;
+            flex-grow: 1;
+        }
+
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .ai-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        .ai-btn:hover {
+            background-color: #059669;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        /* Pop-up Screen overlay styles */
+        .modal-overlay {
+            display: none; 
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .draft-box {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 1rem;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .copy-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .copy-btn:hover {
+            background: #4338ca;
+        }
+
+        .google-link-container {
+            text-align: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .google-link {
+            display: none; 
+            color: #2563eb;
+            font-weight: bold;
+            text-decoration: underline;
+            font-size: 1.05rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Submit Your Review</h2>
+        <form id="reviewForm">
+            <div class="name-row form-group">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" placeholder="e.g., Kajal" required>
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" placeholder="e.g., Patel" required>
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>Profession</label>
+                <div class="selection-list">
+                    <label class="radio-label">
+                        <input type="radio" name="profession" value="Student" required> Student
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="profession" value="Business"> Business
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="profession" value="Government Employee"> Government Employee
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="profession" value="Salaried Employee"> Salaried Employee
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="location">Location</label>
+                <input type="text" id="location" placeholder="e.g., Anand, Gujarat" required>
+            </div>
+
+            <div class="form-group">
+                <label>Business Category Availed <span>(you can select multiple category)</span></label>
+                <div class="selection-list">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Accounting" onchange="handleCategoryChange(this)"> Accounting
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Audits" onchange="handleCategoryChange(this)"> Audits
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="GST" onchange="handleCategoryChange(this)"> GST
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Income Tax Return (ITR)" onchange="handleCategoryChange(this)"> Income Tax Return (ITR)
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Financing" onchange="handleCategoryChange(this)"> Financing
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="category" value="Bookkeeping Service" onchange="handleCategoryChange(this)"> Bookkeeping Service
+                    </label>
+                    <div class="other-input-container">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="otherCheckbox" value="Other" onchange="handleOtherChange(this)"> Other —
+                        </label>
+                        <input type="text" id="otherText" class="other-text-field" placeholder="Enter your business type" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="review">Review Description</label>
+                <textarea id="review" placeholder="Type your review or click the button below to change text infinitely..." required></textarea>
+                <button type="button" class="ai-btn" onclick="generateRealReviewUnlimited()">✨Generate AI Review</button>
+            </div>
+
+            <button type="submit" class="submit-btn" id="submitBtn">Submit Review</button>
+        </form>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h3>Your Generated Draft</h3>
+            
+            <div class="draft-box" id="draftText"></div>
+
+            <button class="copy-btn" onclick="copyDraft()">
+                📋 <span id="copyBtnText">Copy Draft Text</span>
+            </button>
+
+            <div class="google-link-container">
+                <a href="https://g.page/r/CS0dngZ-ASEbEBM/review" 
+                   target="_blank" 
+                   class="google-link" 
+                   id="googleLink">
+                   👉 Click here to paste your review on Google
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // High-variety review combinations setup for infinite variations on click
+        const reviewComponents = {
+            "Accounting": {
+                openings: ["Honestly, the team made everything super easy for me.", "I had an excellent experience with their accounting services.", "Outstanding support from start to finish."],
+                cores: ["They cleared up all my doubts and handled my accounts perfectly without any delays.", "They are incredibly organized, professional, and took all the stress away.", "Their attention to detail with corporate accounts is truly impressive."],
+                closings: ["Highly recommended!", "Will definitely keep working with them.", "Worth every single penny."]
+            },
+            "Audits": {
+                openings: ["Our company's compliance audit went incredibly smoothly.", "They handled our complex business audit flawlessly.", "Very thorough and systematic approach to verification."],
+                cores: ["They carefully checked through all our documents and answered our team's questions directly.", "Everything was compiled precisely, and they pointed out helpful ways to streamline our filings.", "They maintained pure professionalism and completed everything right on schedule."],
+                closings: ["Great professionals to work with.", "Highly appreciate their transparency.", "Top-tier team!"]
+            },
+            "GST": {
+                openings: ["GST compliance used to be a massive headache for us.", "They made our monthly GST filings totally stress-free.", "Excellent and prompt handling of all tax portals."],
+                cores: ["They track amendments instantly and process returns without a single compliance mistake.", "Their team fixed our previous portal errors and sorted our input tax credit perfectly.", "Super responsive whenever we need immediate verification regarding bills."],
+                closings: ["Total lifesaver for businesses.", "Excellent service!", "Five stars all the way."]
+            },
+            "Income Tax Return (ITR)": {
+                openings: ["Filing my ITR has never been this smooth before.", "They helped me file my tax returns quickly and cleanly.", "Very knowledgeable when it comes to personal and business tax laws."],
+                cores: ["They managed to save me extra stress and maximized my legitimate deductions easily.", "They clearly explained which tax regimes fit my profile best before processing.", "The whole process took less time than expected with zero hassle."],
+                closings: ["Highly recommend them for tax planning.", "Extremely satisfied with the service.", "Will return next year for sure."]
+            },
+            "Financing": {
+                openings: ["They provided exceptional strategic advice for our funding requirements.", "Getting financial consulting from them was the best business choice.", "Incredibly resourceful advisory service."],
+                cores: ["They helped structure our documentation perfectly and guided us through options clearly.", "Their practical insights completely reworked our capital management ideas for the better.", "They broke down complex procedures so we knew exactly what steps to follow."],
+                closings: ["Highly professional experts.", "Can't thank them enough for the breakthrough.", "Brilliant consultants."]
+            },
+            "Bookkeeping Service": {
+                openings: ["They took over our daily transaction records and did wonders.", "Our day-to-day books are perfectly organized now.", "Clean and reliable data tracking every month."],
+                cores: ["Our balances match down to a penny, and matching ledgers has become incredibly fast.", "They managed our messy logs and converted them into clean, tracking sheets.", "They keep our financial tracking updated instantly without needing constant reminders."],
+                closings: ["Highly recommend their bookkeeping plans.", "Outstanding tracking work.", "Wonderful support team."]
+            },
+            "Other": {
+                openings: ["The experience was absolutely wonderful from start to finish.", "Incredibly professional service and very friendly staff.", "Exceeded all my expectations across the board."],
+                cores: ["The team went well out of their way to ensure everything was handled seamlessly.", "They handle their clients with immense care and communicate clearly throughout.", "Fast turnaround time, straightforward workflows, and exceptional support."],
+                closings: ["I will definitely choose them again!", "Highly recommended to anyone looking for genuine help.", "Thanks a lot for the fantastic assistance!"]
+            }
+        };
+
+        function handleOtherChange(otherCheckbox) {
+            const standardCategories = document.querySelectorAll('input[name="category"]');
+            const otherTextField = document.getElementById('otherText');
+            
+            if (otherCheckbox.checked) {
+                standardCategories.forEach(cb => {
+                    cb.checked = false;
+                    cb.disabled = true;
+                    cb.parentElement.classList.add('disabled');
+                });
+                otherTextField.disabled = false;
+                otherTextField.required = true;
+                otherTextField.focus();
+            } else {
+                standardCategories.forEach(cb => {
+                    cb.disabled = false;
+                    cb.parentElement.classList.remove('disabled');
+                });
+                otherTextField.disabled = true;
+                otherTextField.required = false;
+                otherTextField.value = "";
+            }
+        }
+
+        function handleCategoryChange(checkbox) {
+            document.getElementById('otherCheckbox').checked = false;
+            document.getElementById('otherText').disabled = true;
+            document.getElementById('otherText').required = false;
+            document.getElementById('otherText').value = "";
+        }
+
+        function getSelectedCategories() {
+            const isOtherChecked = document.getElementById('otherCheckbox').checked;
+            if (isOtherChecked) {
+                const customVal = document.getElementById('otherText').value.trim();
+                return customVal ? [customVal] : ["Other"];
+            }
+
+            const checkboxes = document.querySelectorAll('input[name="category"]:checked');
+            const selected = [];
+            checkboxes.forEach(cb => {
+                selected.push(cb.value);
+            });
+            return selected;
+        }
+
+        // Dynamic multi-segment random text selector engine
+        function generateRealReviewUnlimited() {
+            const isOtherChecked = document.getElementById('otherCheckbox').checked;
+            let categories = isOtherChecked ? ["Other"] : getSelectedCategories();
+
+            if (categories.length === 0) {
+                alert("Please select or enter at least one Business Category first!");
+                return;
+            }
+            
+            let compiledReviewParts = [];
+            categories.forEach(cat => {
+                const pool = reviewComponents[cat] || reviewComponents["Other"];
+                
+                const randomOpen = pool.openings[Math.floor(Math.random() * pool.openings.length)];
+                const randomCore = pool.cores[Math.floor(Math.random() * pool.cores.length)];
+                const randomClose = pool.closings[Math.floor(Math.random() * pool.closings.length)];
+                
+                compiledReviewParts.push(`${randomOpen} ${randomCore} ${randomClose}`);
+            });
+
+            document.getElementById('review').value = compiledReviewParts.join(" ");
+        }
+
+        // Processing submissions
+        document.getElementById('reviewForm').addEventListener('submit', function(event) {
+            event.preventDefault(); 
+
+            const fname = document.getElementById('firstName').value;
+            const lname = document.getElementById('lastName').value;
+            const userProfession = document.querySelector('input[name="profession"]:checked').value;
+            const userLocation = document.getElementById('location').value;
+            const categories = getSelectedCategories();
+            const userReviewText = document.getElementById('review').value;
+
+            if (categories.length === 0 || (document.getElementById('otherCheckbox').checked && !document.getElementById('otherText').value.trim())) {
+                alert("Please check a category or type your custom choice in the space provided!");
+                return;
+            }
+
+            let categoryString = "";
+            if (categories.length === 1) {
+                categoryString = categories[0] + " business category";
+            } else {
+                categoryString = categories.slice(0, -1).join(", ") + " and " + categories[categories.length - 1] + " business categories";
+            }
+
+            const fullyBuiltDraft = `My name is ${fname} ${lname}. I am a ${userProfession} from ${userLocation}. I avail the ${categoryString}. ${userReviewText}`;
+
+            document.getElementById('draftText').innerText = fullyBuiltDraft;
+            document.getElementById('modalOverlay').style.display = 'flex';
+        });
+
+        function closeModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('copyBtnText').innerText = "Copy Draft Text";
+            document.getElementById('googleLink').style.display = 'none';
+        }
+
+        function copyDraft() {
+            const textToCopy = document.getElementById('draftText').innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                document.getElementById('copyBtnText').innerText = "Copied! ✓";
+                document.getElementById('googleLink').style.display = 'inline-block';
+            }).catch(err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
